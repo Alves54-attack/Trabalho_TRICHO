@@ -1,0 +1,49 @@
+from Bio import SeqIO
+
+# Lista de gêneros na ordem desejada
+ordered_genus = [
+    "Anomalopsyche", "Contulma", "Antipodoecia", "Allomyia", "Pedomoecus", "Atriplectides",
+    "Barbarochthon", "Beraea", "Beraeamyia", "Beraeodes", "Ernodes",
+    "Amiocentrus", "Brachycentrus", "Eobrachycentrus", "Micrasema", "Tsudaea",
+    "Alloecentrella", "Caenota", "Caloca", "Calocoides", "Pliocaloca", "Pycnocentrella", "Tamasia",
+    "Chathamia", "Philanisus", "Beraeoptera", "Coenoria", "Confluens", "Conoesucus", "Costora", "Hampa", "Lingora", "Matasia", "Olinga", "Periwinkla", "Pycnocentria", "Pycnocentrodes",
+    "Agmina", "Austrotinodes", "Daternomina", "Ecnomina", "Ecnomus", "Parecnomina",
+    "Alloecella", "Alloecentrellodes", "Austrocentrus", "Eosericostoma", "Helicopha", "Heloccabus", "Microthremma", "Zelolessica",
+    "Helicopsyche", "Rakiura", "Hydrosalpinx", "Kokiria", "Pangullia", "Limnocentropus", "Molanna", "Molannodes",
+    "Oeconesus", "Pseudoeconesus", "Tarapsyche", "Zelandopsyche", "Petrothrincus",
+    "Aphilorheithrus", "Austrheithrus", "Kosrheithrus", "Mystacopsyche", "Philorheithrus", "Psilopsyche", "Tasmanthrus",
+    "Phryganopsyche", "Dyschimus", "Silvatares", "Plectrotarsus", "Antillopsyche", "Pseudoneureclipsis",
+    "Eoneureclipsis", "Zelandoptila", "Palaeagapetus", "Ptilocolepus", "Himalopsyche", "Rhyacophila", "Goereilla",
+    "Agarodes", "Fattigia", "Gumaga", "Myotrichia", "Notidobia", "Notidobiella", "Oecismus", "Parasericostoma", "Petroplax", "Rhoizema", "Schizopelex", "Sericostoma",
+    "Tasiagma", "Tasimia", "Trichovespula"
+]
+
+# Caminho do arquivo de entrada e saída
+input_file = r'C:/Users/Admin/Documents/projeto_2/sequencia_6.fas'
+output_file = r'C:/Users/Admin/Documents/projeto_2/sequencia_7.fas'
+
+def extract_genus(description):
+    parts = description.split('|')
+    if len(parts) >= 2:
+        genus = parts[1].strip()
+        # Verifica se o gênero começa com letra maiúscula
+        if genus and genus[0].isupper():
+            return genus
+    return None
+
+# Dicionário para armazenar as sequências agrupadas por gênero
+grouped_sequences = {genus: [] for genus in ordered_genus}
+
+# Lê as sequências do arquivo FASTA e organiza no dicionário de gêneros
+for record in SeqIO.parse(input_file, 'fasta'):
+    genus = extract_genus(record.description)
+    if genus in grouped_sequences:
+        grouped_sequences[genus].append(record)
+    else:
+        print(f"Gênero {genus} não encontrado na ordem especificada. Sequência não incluída.")
+
+# Escreve as sequências agrupadas por gênero no arquivo de saída
+with open(output_file, 'w') as out_handle:
+    for genus in ordered_genus:
+        sequences = grouped_sequences[genus]
+        SeqIO.write(sequences, out_handle, 'fasta')
